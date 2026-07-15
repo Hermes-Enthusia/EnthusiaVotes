@@ -6,7 +6,9 @@ import net.badgersmc.votes.infrastructure.bukkit.BukkitGoldDelivery
 import net.badgersmc.votes.infrastructure.bukkit.EnthusiaVotesPlugin
 import net.badgersmc.votes.infrastructure.bukkit.VotifierVoteListener
 import net.badgersmc.votes.infrastructure.config.VoteConfig
+import net.badgersmc.votes.infrastructure.form.BedrockVoteForm
 import net.badgersmc.votes.infrastructure.messaging.BukkitVoteBroadcaster
+import net.badgersmc.votes.infrastructure.papi.EnthusiaVotesExpansion
 import net.badgersmc.votes.infrastructure.persistence.DatabaseFactory
 import net.badgersmc.votes.infrastructure.persistence.SqliteVoteRepository
 import java.time.Duration
@@ -73,15 +75,19 @@ class ServiceModule(
         VoteService(voteRepository, rewardService, voteBroadcaster, goldDelivery, votePartyService, voteConfig)
     }
 
+    val bedrockVoteForm: BedrockVoteForm by lazy {
+        BedrockVoteForm(voteRepository, voteConfig, plugin.logger)
+    }
+
     val voteCommand: VoteCommand by lazy { VoteCommand(voteRepository, voteConfig) }
     val voteSitesCommand: VoteSitesCommand by lazy { VoteSitesCommand(voteConfig) }
-    val evAdminCommand: EVAdminCommand by lazy { EVAdminCommand() }
+    val evAdminCommand: EVAdminCommand by lazy { EVAdminCommand(votePartyService, voteRepository) }
 
     val voteListener: VotifierVoteListener by lazy {
         VotifierVoteListener(voteService)
     }
 
-    val resumeGiveawaysOnStartup: () -> Unit = {
-        // TODO: resume vote party state from DB
+    val placeholderExpansion: EnthusiaVotesExpansion by lazy {
+        EnthusiaVotesExpansion(voteRepository, votePartyService)
     }
 }

@@ -3,6 +3,7 @@ package net.badgersmc.votes.infrastructure.bukkit
 import net.badgersmc.votes.infrastructure.di.ServiceModule
 import net.badgersmc.votes.infrastructure.persistence.DatabaseFactory
 import net.badgersmc.votes.infrastructure.persistence.Migrations
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
 class EnthusiaVotesPlugin : JavaPlugin() {
@@ -23,7 +24,7 @@ class EnthusiaVotesPlugin : JavaPlugin() {
 
         server.commandMap.register(
             "vote",
-            VoteBukkitCommand(services.voteCommand),
+            VoteBukkitCommand(services.voteCommand, services.bedrockVoteForm),
         )
 
         server.commandMap.register(
@@ -38,6 +39,12 @@ class EnthusiaVotesPlugin : JavaPlugin() {
 
         server.pluginManager.registerEvents(services.voteListener, this)
 
+        // Register PlaceholderAPI expansion if PAPI is present
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            services.placeholderExpansion.register()
+            logger.info("PlaceholderAPI expansion registered.")
+        }
+
         services.scheduler.start()
 
         logger.info("EnthusiaVotes enabled.")
@@ -47,6 +54,9 @@ class EnthusiaVotesPlugin : JavaPlugin() {
         if (::services.isInitialized) {
             services.scheduler.stop()
             services.nexusScheduler.cancelAll()
+            if (services.placeholderExpansion.isRegistered()) {
+                services.placeholderExpansion.unregister()
+            }
         }
         databaseFactory?.close()
         databaseFactory = null

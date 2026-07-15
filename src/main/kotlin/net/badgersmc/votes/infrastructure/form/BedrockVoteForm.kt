@@ -32,7 +32,8 @@ class BedrockVoteForm(
                 "  Total Votes: ${stats.totalVotes}\n" +
                 "  Current Streak: ${stats.currentStreak}\n" +
                 "  Best Streak: ${stats.bestStreak}\n\n" +
-                "Click a site below to vote!"
+                "Tap a site below to get the link.\n" +
+                "(Bedrock can't open links — copy it!)"
             )
 
         for (site in voteConfig.voteSites) {
@@ -45,8 +46,7 @@ class BedrockVoteForm(
             if (index < voteConfig.voteSites.size) {
                 val site = voteConfig.voteSites[index]
                 player.sendRichMessage(
-                    "<shadow:#000000:1><gold>Vote link:</gold> " +
-                    "<click:open_url:'${site.url}'><aqua>${site.name}</aqua></click></shadow>"
+                    "<shadow:#000000:1><gold>${site.name}:</gold> <white>${site.url}</white></shadow>"
                 )
             }
         }
