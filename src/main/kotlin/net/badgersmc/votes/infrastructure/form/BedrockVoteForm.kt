@@ -2,11 +2,9 @@ package net.badgersmc.votes.infrastructure.form
 
 import net.badgersmc.votes.application.VoteRepository
 import net.badgersmc.votes.infrastructure.config.VoteConfig
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 import org.geysermc.cumulus.form.SimpleForm
 import org.geysermc.floodgate.api.FloodgateApi
-import java.util.UUID
 import java.util.logging.Logger
 
 /** Sends a SimpleForm to Bedrock players for /vote. */

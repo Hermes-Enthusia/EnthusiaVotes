@@ -2,6 +2,7 @@ package net.badgersmc.votes.application
 
 import net.badgersmc.votes.domain.VotePartyState
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import java.util.UUID
 
@@ -61,7 +62,7 @@ class EVAdminCommand(
             }
         }
 
-        return Component.join(Component.newline(), lines)
+        return Component.join(JoinConfiguration.separator(Component.newline()), lines)
     }
 
     private fun partyStatus(): Component {

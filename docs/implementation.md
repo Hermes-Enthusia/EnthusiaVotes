@@ -27,6 +27,8 @@ forbidden: []
 | infrastructure | `net.badgersmc.votes.infrastructure.di` | `ServiceModule`, `VoteScheduler` |
 | infrastructure | `net.badgersmc.votes.infrastructure.persistence` | `DatabaseFactory`, `VoteTable`, `PlayerStatsTable`, `SqliteVoteRepository`, `Migrations` |
 | infrastructure | `net.badgersmc.votes.infrastructure.messaging` | `BukkitVoteBroadcaster` |
+| infrastructure | `net.badgersmc.votes.infrastructure.form` | `BedrockVoteForm` |
+| infrastructure | `net.badgersmc.votes.infrastructure.papi` | `EnthusiaVotesExpansion` |
 | loader | `net.badgersmc.votes.loader` | `EnthusiaVotesLoader` |
 
 ## Command registration
