@@ -10,6 +10,7 @@ class VoteService(
     private val repo: VoteRepository,
     private val rewardService: RewardService,
     private val broadcaster: VoteBroadcaster,
+    private val goldDelivery: GoldDelivery,
 ) {
 
     fun processVote(playerName: String, playerUuid: UUID, serviceName: String): VoteResult {
@@ -24,6 +25,8 @@ class VoteService(
             goldAwarded = gold,
         )
         repo.saveVote(record)
+
+        goldDelivery.deliver(playerUuid, gold)
 
         val message = rewardService.buildVoteMessage(playerName, gold, streak, serviceName)
         broadcaster.broadcastVote(message)

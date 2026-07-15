@@ -36,6 +36,8 @@ class EnthusiaVotesPlugin : JavaPlugin() {
             EVAdminBukkitCommand(services.evAdminCommand),
         )
 
+        server.pluginManager.registerEvents(services.voteListener, this)
+
         services.scheduler.start()
 
         logger.info("EnthusiaVotes enabled.")

@@ -2,6 +2,7 @@ package net.badgersmc.votes.infrastructure.di
 
 import net.badgersmc.nexus.scheduler.NexusScheduler
 import net.badgersmc.votes.application.*
+import net.badgersmc.votes.infrastructure.bukkit.BukkitGoldDelivery
 import net.badgersmc.votes.infrastructure.bukkit.EnthusiaVotesPlugin
 import net.badgersmc.votes.infrastructure.bukkit.VotifierVoteListener
 import net.badgersmc.votes.infrastructure.config.VoteConfig
@@ -45,8 +46,12 @@ class ServiceModule(
         BukkitVoteBroadcaster()
     }
 
+    val goldDelivery: GoldDelivery by lazy {
+        BukkitGoldDelivery()
+    }
+
     val voteService: VoteService by lazy {
-        VoteService(voteRepository, rewardService, voteBroadcaster)
+        VoteService(voteRepository, rewardService, voteBroadcaster, goldDelivery)
     }
 
     val voteCommand: VoteCommand by lazy { VoteCommand() }
