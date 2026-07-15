@@ -46,6 +46,7 @@ dependencies {
 
     // Storage (shaded — avoids Nexus loader download issues)
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.2")
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.jetbrains.exposed:exposed-core:0.55.0")
     implementation("org.jetbrains.exposed:exposed-dao:0.55.0")

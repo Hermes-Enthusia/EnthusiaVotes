@@ -4,6 +4,7 @@ import net.badgersmc.nexus.scheduler.NexusScheduler
 import net.badgersmc.votes.application.*
 import net.badgersmc.votes.infrastructure.bukkit.BukkitGoldDelivery
 import net.badgersmc.votes.infrastructure.bukkit.EnthusiaVotesPlugin
+import net.badgersmc.votes.infrastructure.bukkit.ProxiedDeliveryService
 import net.badgersmc.votes.infrastructure.bukkit.VotifierVoteListener
 import net.badgersmc.votes.infrastructure.config.VoteConfig
 import net.badgersmc.votes.infrastructure.form.BedrockVoteForm
@@ -51,8 +52,12 @@ class ServiceModule(
         VoteConfig()
     }
 
+    val votePartySpeaker: VotePartySpeaker by lazy {
+        plugin.proxiedDeliveryService ?: NoOpVotePartySpeaker()
+    }
+
     val votePartyService: VotePartyService by lazy {
-        VotePartyService(voteConfig, plugin)
+        VotePartyService(voteConfig, plugin, votePartySpeaker)
     }
 
     val scheduler: VoteScheduler by lazy {
@@ -68,7 +73,7 @@ class ServiceModule(
     }
 
     val goldDelivery: GoldDelivery by lazy {
-        BukkitGoldDelivery()
+        plugin.proxiedDeliveryService ?: BukkitGoldDelivery()
     }
 
     val voteService: VoteService by lazy {
@@ -90,4 +95,9 @@ class ServiceModule(
     val placeholderExpansion: EnthusiaVotesExpansion by lazy {
         EnthusiaVotesExpansion(voteRepository, votePartyService)
     }
+}
+
+private class NoOpVotePartySpeaker : VotePartySpeaker {
+    override fun onPartyActivated() {}
+    override fun onPartyDeactivated() {}
 }

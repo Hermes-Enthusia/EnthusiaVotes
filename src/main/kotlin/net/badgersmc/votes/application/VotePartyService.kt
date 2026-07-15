@@ -10,6 +10,7 @@ import java.time.Instant
 class VotePartyService(
     private val config: VoteConfig,
     private val plugin: EnthusiaVotesPlugin,
+    private val speaker: VotePartySpeaker? = null,
 ) {
     @Volatile
     private var currentVotes: Int = 0
@@ -71,6 +72,7 @@ class VotePartyService(
         _active = true
         currentVotes = 0
         _startedAt = Instant.now()
+        speaker?.onPartyActivated()
 
         val duration = Duration.ofMinutes(config.votePartyDurationMinutes.toLong())
         val ticks = duration.seconds * 20
@@ -86,6 +88,7 @@ class VotePartyService(
         currentVotes = 0
         _startedAt = null
         partyTask = null
+        speaker?.onPartyDeactivated()
     }
 
     fun getState(): VotePartyState = VotePartyState(

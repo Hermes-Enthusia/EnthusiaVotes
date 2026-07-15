@@ -1,7 +1,14 @@
 # EnthusiaVotes configuration
 
 storage:
+  backend: sqlite  # "sqlite" (default) or "mariadb"
   file: "votes.db"
+  mariadb:
+    host: "localhost"
+    port: 3306
+    database: "enthusiavotes"
+    user: "enthusia"
+    password: "changeme"
 
 # Gold range per vote
 gold:

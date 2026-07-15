@@ -1,22 +1,61 @@
 package net.badgersmc.votes.infrastructure.persistence
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import net.badgersmc.votes.infrastructure.config.MariaDbConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import java.io.File
+import javax.sql.DataSource
 
-class DatabaseFactory(
+interface DatabaseFactory {
+    val database: Database
+    fun close()
+}
+
+class LocalDatabaseFactory(
     private val dataFolder: File,
     private val fileName: String,
-) {
-    val database: Database by lazy {
+) : DatabaseFactory {
+    override val database: Database by lazy {
         dataFolder.mkdirs()
         val url = "jdbc:sqlite:${dataFolder.absolutePath}/$fileName"
         Database.connect(url, "org.sqlite.JDBC")
     }
 
-    fun close() {
+    override fun close() {
         // SQLite auto-closes on JVM exit
+    }
+}
+
+class RemoteDatabaseFactory(
+    private val config: MariaDbConfig,
+) : DatabaseFactory {
+    private val dataSource: DataSource by lazy { createDataSource() }
+
+    override val database: Database by lazy {
+        Database.connect(dataSource)
+    }
+
+    private fun createDataSource(): HikariDataSource {
+        val hikariConfig = HikariConfig().apply {
+            jdbcUrl = "jdbc:mariadb://${config.host}:${config.port}/${config.database}?useSSL=false"
+            username = config.user
+            password = config.password
+            driverClassName = "org.mariadb.jdbc.Driver"
+            maximumPoolSize = 10
+            minimumIdle = 2
+            idleTimeout = 30_000
+            maxLifetime = 600_000
+            connectionTimeout = 5_000
+            isAutoCommit = false
+        }
+        return HikariDataSource(hikariConfig)
+    }
+
+    override fun close() {
+        (dataSource as? HikariDataSource)?.close()
     }
 }
 

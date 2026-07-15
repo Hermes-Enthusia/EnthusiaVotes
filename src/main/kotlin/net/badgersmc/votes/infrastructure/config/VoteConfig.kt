@@ -1,5 +1,19 @@
 package net.badgersmc.votes.infrastructure.config
 
+data class StorageConfig(
+    val backend: String = "sqlite",
+    val file: String = "votes.db",
+    val mariadb: MariaDbConfig = MariaDbConfig(),
+)
+
+data class MariaDbConfig(
+    val host: String = "localhost",
+    val port: Int = 3306,
+    val database: String = "enthusiavotes",
+    val user: String = "enthusia",
+    val password: String = "changeme",
+)
+
 data class VoteSite(
     val name: String,
     val url: String,
@@ -11,6 +25,7 @@ data class VoteConfig(
     val votePartyThreshold: Int = 100,
     val votePartyDurationMinutes: Int = 5,
     val enabledServices: List<String> = emptyList(),
+    val storageConfig: StorageConfig = StorageConfig(),
     val voteSites: List<VoteSite> = listOf(
         VoteSite("Planet Minecraft", "https://www.planetminecraft.com/server/badgersmc/vote/"),
         VoteSite("MinecraftServers.org", "https://minecraftservers.org/vote/123456"),
