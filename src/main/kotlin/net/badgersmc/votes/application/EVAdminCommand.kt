@@ -11,8 +11,8 @@ class EVAdminCommand(
     private val voteRepository: VoteRepository,
     private val lang: LangService,
 ) {
-    private val header = lang.msg("admin.header")
-    private val unknown = lang.msg("admin.unknown_subcommand")
+    private val header get() = lang.msg("admin.header")
+    private val unknown get() = lang.msg("admin.unknown_subcommand")
 
     fun execute(playerName: String, playerUuid: UUID, args: List<String>): Component {
         if (args.isEmpty()) return unknown

@@ -37,7 +37,8 @@ admin:
 
 voteparty:
   broadcast: "<shadow:#000000:1><gradient:gold:yellow>VOTE PARTY!</gradient> Gold rewards are now <gold>doubled</gold> for <aqua><minutes> minutes</aqua>!</shadow>"
-  reward_message: "<shadow:#000000:1><yellow><player></yellow> voted on <aqua><service></aqua> and received <gold><gold> Raw Gold</gold><streak_text>!</shadow>"
+  reward_message: "<shadow:#000000:1><yellow><player></yellow> voted on <aqua><service></aqua> and received <gold>Raw Gold</gold><streak_text>!</shadow>"
+  streak_suffix: "<shadow:#000000:1> <gray>(<streak>x streak!)</gray></shadow>"
 
 bedrock:
   form:

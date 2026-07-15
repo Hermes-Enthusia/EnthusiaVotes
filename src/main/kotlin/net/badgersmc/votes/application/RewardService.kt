@@ -29,7 +29,9 @@ class RewardService(
         streak: Int,
         serviceName: String,
     ): Component {
-        val streakText = if (streak > 1) " (${streak}x streak!)" else ""
+        val streakText = if (streak > 1)
+            lang.msg("voteparty.streak_suffix", "streak" to streak.toString())
+        else Component.empty()
         return lang.msg(
             "voteparty.reward_message",
             "player" to playerName,
