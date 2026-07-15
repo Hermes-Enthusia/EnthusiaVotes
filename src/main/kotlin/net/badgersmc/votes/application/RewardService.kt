@@ -6,13 +6,15 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 
 class RewardService(
     private val config: VoteConfig,
+    private val votePartyService: VotePartyService,
 ) {
     private val mm = MiniMessage.miniMessage()
 
     fun calculateGold(streak: Int): Int {
         val base = (config.minGold..config.maxGold).random()
-        val multiplier = streakMultiplier(streak)
-        return (base * multiplier).toInt().coerceAtLeast(1)
+        val streakMult = streakMultiplier(streak)
+        val partyMult = votePartyService.getCurrentMultiplier()
+        return (base * streakMult * partyMult).toInt().coerceAtLeast(1)
     }
 
     fun streakMultiplier(streak: Int): Double = when {

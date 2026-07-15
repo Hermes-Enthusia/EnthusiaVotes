@@ -21,7 +21,15 @@ data class PlayerStats(
 )
 
 data class VoteParty(
-    val votesNeeded: Int,
+    val threshold: Int,
     val currentVotes: Int = 0,
     val active: Boolean = false,
+    val startedAt: Instant? = null,
+)
+
+data class VotePartyState(
+    val active: Boolean,
+    val currentVotes: Int,
+    val threshold: Int,
+    val justActivated: Boolean,
 )
