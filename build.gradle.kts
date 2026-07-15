@@ -37,6 +37,8 @@ dependencies {
 
     // Geyser API for Bedrock forms (provided by server)
     compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
+    compileOnly("org.geysermc.cumulus:cumulus:2.0.0-SNAPSHOT")
 
     // Kotlin + coroutines (downloaded at runtime by PaperLoader)
     compileOnly(kotlin("stdlib"))
