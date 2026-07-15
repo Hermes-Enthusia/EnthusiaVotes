@@ -8,7 +8,7 @@ description: Vote rewards plugin for EnthusiaSMP — streaks, vote parties, and 
 load: STARTUP
 dependencies:
   server:
-    NuVotifier:
+    Votifier:
       load: BEFORE
       required: true
       join-classpath: true

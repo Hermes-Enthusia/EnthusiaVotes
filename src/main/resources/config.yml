@@ -1,0 +1,25 @@
+# EnthusiaVotes configuration
+
+storage:
+  file: "votes.db"
+
+# Gold range per vote
+gold:
+  min: 1
+  max: 10
+
+# VoteParty: activates after this many total votes
+vote-party:
+  threshold: 100
+  duration-minutes: 5
+
+# Voting sites displayed in /vote and /votesites
+vote-sites:
+  - name: "Planet Minecraft"
+    url: "https://www.planetminecraft.com/server/badgersmc/vote/"
+  - name: "MinecraftServers.org"
+    url: "https://minecraftservers.org/vote/123456"
+  - name: "Minecraft-MP"
+    url: "https://minecraft-mp.com/server/123456/vote/"
+  - name: "TopG"
+    url: "https://topg.org/minecraft-servers/server-123456/vote"

@@ -37,18 +37,20 @@ dependencies {
 
     // Geyser API for Bedrock forms (provided by server)
     compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
+    compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
+    compileOnly("org.geysermc.cumulus:cumulus:2.0.0-SNAPSHOT")
 
     // Kotlin + coroutines (downloaded at runtime by PaperLoader)
     compileOnly(kotlin("stdlib"))
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
-    // Storage (downloaded at runtime by PaperLoader)
-    compileOnly("org.xerial:sqlite-jdbc:3.45.1.0")
-    compileOnly("com.zaxxer:HikariCP:5.1.0")
-    compileOnly("org.jetbrains.exposed:exposed-core:0.55.0")
-    compileOnly("org.jetbrains.exposed:exposed-dao:0.55.0")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:0.55.0")
-    compileOnly("org.jetbrains.exposed:exposed-java-time:0.55.0")
+    // Storage (shaded — avoids Nexus loader download issues)
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.55.0")
 
     // Adventure (bundled with Paper)
     compileOnly("net.kyori:adventure-api:4.17.0")

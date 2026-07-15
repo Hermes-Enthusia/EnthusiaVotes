@@ -2,7 +2,7 @@ package net.badgersmc.votes.application
 
 import net.badgersmc.votes.infrastructure.config.VoteConfig
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.Component.newline
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class VoteSitesCommand(
@@ -28,6 +28,6 @@ class VoteSitesCommand(
             )
         }
 
-        return Component.join(newline(), lines)
+        return Component.join(JoinConfiguration.separator(Component.newline()), lines)
     }
 }
