@@ -12,22 +12,16 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-        with:
-          fetch-depth: 0
-          persist-credentials: true
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12  # v4.7.1
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
       - name: Compute version
         id: version
-        run: |
-          # Version = 0.1.{commit count}
-          COUNT=$(git rev-list --count HEAD)
-          echo "version=v0.1.${COUNT}" >> "$GITHUB_OUTPUT"
+        run: echo "version=v0.1.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Build shadowJar
         env:
@@ -35,7 +29,7 @@ jobs:
         run: ./gradlew shadowJar --no-daemon -PreleaseVersion="$RELEASE_VERSION"
 
       - name: Create Release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
           name: EnthusiaVotes ${{ steps.version.outputs.version }}
