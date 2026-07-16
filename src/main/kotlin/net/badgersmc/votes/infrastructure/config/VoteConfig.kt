@@ -24,6 +24,11 @@ data class VoteConfig(
     val maxGold: Int = 10,
     val votePartyThreshold: Int = 100,
     val votePartyDurationMinutes: Int = 5,
+    val reminderIntervalMinutes: Int = 5,
+    val voteSound: String = "BLOCK_AMETHYST_BLOCK_CHIME",
+    val allSitesSound: String = "ENTITY_PLAYER_LEVELUP",
+    val allSitesBonusGold: Int = 20,
+    val allSitesBonusMultiplier: Double = 0.5,
     val enabledServices: List<String> = emptyList(),
     val storageConfig: StorageConfig = StorageConfig(),
     val voteSites: List<VoteSite> = listOf(

@@ -1,7 +1,7 @@
 # EnthusiaVotes configuration
 
 storage:
-  backend: sqlite  # "sqlite" (default) or "mariadb"
+  backend: sqlite
   file: "votes.db"
   mariadb:
     host: "localhost"
@@ -10,17 +10,24 @@ storage:
     user: "enthusia"
     password: "changeme"
 
-# Gold range per vote
 gold:
   min: 1
   max: 10
 
-# VoteParty: activates after this many total votes
 vote-party:
   threshold: 100
   duration-minutes: 5
 
-# Voting sites displayed in /vote and /votesites
+reminder-interval-minutes: 5
+
+# Sound for each individual vote (tabbed-out audio cue)
+vote-sound: "BLOCK_AMETHYST_BLOCK_CHIME"
+
+# Sound + bonus when player votes on all configured sites in one day
+all-sites-sound: "ENTITY_PLAYER_LEVELUP"
+all-sites-bonus-gold: 20
+all-sites-bonus-multiplier: 0.5
+
 vote-sites:
   - name: "Planet Minecraft"
     url: "https://www.planetminecraft.com/server/badgersmc/vote/"

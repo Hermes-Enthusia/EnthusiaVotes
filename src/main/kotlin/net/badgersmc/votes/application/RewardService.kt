@@ -49,7 +49,6 @@ class RewardService(
             "voteparty.reward_message",
             "player" to playerName,
             "service" to serviceName,
-            "gold" to gold.toString(),
             "multiplier" to multiplier.toString(),
             "streak_text" to streakText,
         )

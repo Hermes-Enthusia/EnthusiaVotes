@@ -76,6 +76,14 @@ class SqliteVoteRepository(
         VoteTable.selectAll().count().toInt()
     }
 
+    override fun getTodaysServices(uuid: UUID): Set<String> = transaction(db) {
+        val todayStart = java.time.LocalDate.now().atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond()
+        VoteTable.selectAll()
+            .where { (VoteTable.playerUuid eq uuid.toString()) and (VoteTable.timestamp greaterEq todayStart) }
+            .map { it[VoteTable.serviceName] }
+            .toSet()
+    }
+
     private fun toPlayerStats(row: ResultRow): PlayerStats = PlayerStats(
         playerUuid = UUID.fromString(row[PlayerStatsTable.playerUuid]),
         totalVotes = row[PlayerStatsTable.totalVotes],

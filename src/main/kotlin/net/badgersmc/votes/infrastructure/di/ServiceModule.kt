@@ -12,6 +12,9 @@ import net.badgersmc.votes.infrastructure.bukkit.ProxiedDeliveryService
 import net.badgersmc.votes.infrastructure.bukkit.VoteReminder
 import net.badgersmc.votes.infrastructure.bukkit.VotifierVoteListener
 import net.badgersmc.votes.infrastructure.config.VoteConfig
+import net.badgersmc.votes.infrastructure.config.MariaDbConfig
+import net.badgersmc.votes.infrastructure.config.StorageConfig
+import net.badgersmc.votes.infrastructure.config.VoteSite
 import net.badgersmc.votes.infrastructure.form.BedrockVoteForm
 import net.badgersmc.votes.infrastructure.i18n.EnthusiaVotesLang
 import net.badgersmc.votes.infrastructure.messaging.BukkitVoteBroadcaster
@@ -36,8 +39,8 @@ class VoteScheduler(
                 ticks,
             )
         }
-        // Start repeating reminder — every 5 minutes
-        val reminderTicks = 20L * 60 * 5
+        // Start repeating reminder from config
+        val reminderTicks = 20L * 60 * config.reminderIntervalMinutes
         voteReminder.taskId = plugin.server.scheduler.runTaskTimer(
             plugin,
             voteReminder,
@@ -66,7 +69,63 @@ class ServiceModule(
     }
 
     val voteConfig: VoteConfig by lazy {
-        VoteConfig()
+        loadConfig()
+    }
+
+    private fun loadConfig(): VoteConfig {
+        val configFile = java.io.File(plugin.dataFolder, "config.yml")
+        if (!configFile.exists()) {
+            plugin.dataFolder.mkdirs()
+            plugin.saveResource("config.yml", false)
+        }
+
+        try {
+            val yaml = org.yaml.snakeyaml.Yaml()
+            val data: Map<String, Any> = yaml.load(configFile.reader())
+            val storage = (data["storage"] as? Map<*, *>)?.let { s ->
+                val mariadb = (s["mariadb"] as? Map<*, *>)?.let { m ->
+                    MariaDbConfig(
+                        host = m["host"]?.toString() ?: "localhost",
+                        port = (m["port"] as? Number)?.toInt() ?: 3306,
+                        database = m["database"]?.toString() ?: "enthusiavotes",
+                        user = m["user"]?.toString() ?: "enthusia",
+                        password = m["password"]?.toString() ?: "changeme",
+                    )
+                } ?: MariaDbConfig()
+                StorageConfig(
+                    backend = s["backend"]?.toString() ?: "sqlite",
+                    file = s["file"]?.toString() ?: "votes.db",
+                    mariadb = mariadb,
+                )
+            } ?: StorageConfig()
+
+            val gold = data["gold"] as? Map<*, *>
+            val vp = data["vote-party"] as? Map<*, *>
+            val sites = (data["vote-sites"] as? List<*>)?.mapNotNull { s ->
+                val site = s as? Map<*, *> ?: return@mapNotNull null
+                VoteSite(
+                    name = site["name"]?.toString() ?: "Unknown",
+                    url = site["url"]?.toString() ?: "",
+                )
+            } ?: emptyList()
+
+            return VoteConfig(
+                minGold = (gold?.get("min") as? Number)?.toInt() ?: 1,
+                maxGold = (gold?.get("max") as? Number)?.toInt() ?: 10,
+                votePartyThreshold = (vp?.get("threshold") as? Number)?.toInt() ?: 100,
+                votePartyDurationMinutes = (vp?.get("duration-minutes") as? Number)?.toInt() ?: 5,
+                reminderIntervalMinutes = ((data["reminder-interval-minutes"] ?: data["reminderIntervalMinutes"]) as? Number)?.toInt() ?: 5,
+                voteSound = data["vote-sound"]?.toString() ?: "BLOCK_AMETHYST_BLOCK_CHIME",
+                allSitesSound = data["all-sites-sound"]?.toString() ?: "ENTITY_PLAYER_LEVELUP",
+                allSitesBonusGold = ((data["all-sites-bonus-gold"] ?: data["allSitesBonusGold"]) as? Number)?.toInt() ?: 20,
+                allSitesBonusMultiplier = ((data["all-sites-bonus-multiplier"] ?: data["allSitesBonusMultiplier"]) as? Number)?.toDouble() ?: 0.5,
+                storageConfig = storage,
+                voteSites = sites,
+            )
+        } catch (e: Exception) {
+            plugin.logger.warning("Failed to load config.yml: ${e.message}, using defaults")
+            return VoteConfig()
+        }
     }
 
     val lang: LangService by lazy {

@@ -11,6 +11,7 @@ interface VoteRepository {
     fun getTotalVotes(uuid: UUID): Int
     fun getTopVoters(limit: Int): List<PlayerStats>
     fun getTotalServerVotes(): Int
+    fun getTodaysServices(uuid: UUID): Set<String>
     fun savePartyState(state: VotePartyState)
     fun loadPartyState(): VotePartyState?
     fun queueOfflineGold(uuid: UUID, gold: Int)
