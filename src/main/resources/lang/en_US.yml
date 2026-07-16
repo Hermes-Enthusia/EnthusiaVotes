@@ -13,6 +13,7 @@ vote:
     total: "<shadow:#000000:1> <gray>Total Votes:</gray> <white><total></white></shadow>"
     streak: "<shadow:#000000:1> <gray>Current Streak:</gray> <white><streak></white></shadow>"
     best: "<shadow:#000000:1> <gray>Best Streak:</gray> <white><best></white></shadow>"
+    multiplier: "<shadow:#000000:1> <gray>Mining Multiplier:</gray> <white><multiplier>x</white></shadow>"
     empty_separator: "<shadow:#000000:1></shadow>"
     site_header: "<shadow:#000000:1><gold>▶</gold> <yellow>Vote Sites</yellow></shadow>"
     site_entry: "<shadow:#000000:1> <gold>▶</gold> <aqua><name></aqua> <gray>- <click:open_url:'<url>'>Click to vote!</click></gray></shadow>"
@@ -36,19 +37,20 @@ admin:
     top_header: "<shadow:#000000:1><gold>Top Voters:</gold></shadow>"
     top_entry: "<shadow:#000000:1> <gray><rank>.</gray> <white><uuid>...</white> <gray><votes> votes (streak: <streak>)</gray></shadow>"
   party:
-    active: "<shadow:#000000:1><gold>Vote Party is <green>ACTIVE</green>!</gold> Gold rewards are doubled!</shadow>"
+    active: "<shadow:#000000:1><gold>Vote Party is <green>ACTIVE</green>!</gold> Mining multipliers are doubled!</shadow>"
     inactive: "<shadow:#000000:1><gold>Vote Party Status</gold>: <gray><current>/<threshold> votes (<remaining> to go)</gray></shadow>"
 
 voteparty:
-  broadcast: "<shadow:#000000:1><gradient:gold:yellow>VOTE PARTY!</gradient> Gold rewards are now <gold>doubled</gold> for <aqua><minutes> minutes</aqua>!</shadow>"
-  reward_message: "<shadow:#000000:1><yellow><player></yellow> voted on <aqua><service></aqua> and received <gold>Raw Gold</gold><streak_text>!</shadow>"
+  broadcast: "<shadow:#000000:1><gradient:gold:yellow>VOTE PARTY!</gradient> Mining multipliers are now <gold>doubled</gold> for <aqua><minutes> minutes</aqua>!</shadow>"
+  reward_message: "<shadow:#000000:1><yellow><player></yellow> voted on <aqua><service></aqua>! Mining multiplier: <gold><multiplier>x</gold><streak_text>!</shadow>"
   streak_suffix: "<shadow:#000000:1> <gray>(<streak>x streak!)</gray></shadow>"
-  offline_delivery: "<shadow:#000000:1>§a§l✔ §7You received §e<gold> Raw Gold§7 from votes while you were offline!</shadow>"
+  multiplier_info: "<shadow:#000000:1><gray>Streak 3-6: 1.5x | 7-29: 2x | 30+: 3x | VoteParty: 2x</gray></shadow>"
+  mining_multiplier_active: "<shadow:#000000:1><green>Mining multiplier active: <multiplier>x</green></shadow>"
 
 bedrock:
   form:
     title: "Vote for EnthusiaSMP!"
-    content: "Your Stats:\n  Total Votes: <total>\n  Current Streak: <streak>\n  Best Streak: <best>\n\nTap a site below to get the link.\n(Bedrock can't open links — copy it!)"
+    content: "Your Stats:\\n  Total Votes: <total>\\n  Current Streak: <streak>\\n  Best Streak: <best>\\n\\nTap a site below to get the link.\\n(Bedrock can't open links — copy it!)"
     link_message: "<shadow:#000000:1><gold><name>:</gold> <white><url></white></shadow>"
 
 error:

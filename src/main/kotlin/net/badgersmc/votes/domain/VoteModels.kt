@@ -9,7 +9,7 @@ data class VoteRecord(
     val playerName: String,
     val serviceName: String,
     val timestamp: Instant = Instant.now(),
-    val goldAwarded: Int,
+    val goldAwarded: Int = 0,
 )
 
 data class PlayerStats(

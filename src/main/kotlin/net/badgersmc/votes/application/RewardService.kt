@@ -1,19 +1,30 @@
 package net.badgersmc.votes.application
 
 import net.badgersmc.nexus.i18n.LangService
-import net.badgersmc.votes.infrastructure.config.VoteConfig
 import net.kyori.adventure.text.Component
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class RewardService(
-    private val config: VoteConfig,
+    private val voteRepository: VoteRepository,
     private val votePartyService: VotePartyService,
     private val lang: LangService,
 ) {
-    fun calculateGold(streak: Int): Int {
-        val base = (config.minGold..config.maxGold).random()
+    private val multiplierCache = ConcurrentHashMap<UUID, Double>()
+
+    fun cacheMultiplier(uuid: UUID, streak: Int) {
+        val partyMult = votePartyService.getCurrentMultiplier()
+        val streakMult = streakMultiplier(streak)
+        multiplierCache[uuid] = streakMult * partyMult
+    }
+
+    fun getMiningMultiplier(uuid: UUID): Double {
+        multiplierCache[uuid]?.let { return it }
+        val stats = voteRepository.getStats(uuid)
+        val streak = stats.currentStreak
         val streakMult = streakMultiplier(streak)
         val partyMult = votePartyService.getCurrentMultiplier()
-        return (base * streakMult * partyMult).toInt().coerceAtLeast(1)
+        return (streakMult * partyMult).also { multiplierCache[uuid] = it }
     }
 
     fun streakMultiplier(streak: Int): Double = when {
@@ -26,6 +37,7 @@ class RewardService(
     fun buildVoteMessage(
         playerName: String,
         gold: Int,
+        multiplier: Double,
         streak: Int,
         serviceName: String,
     ): Component {
@@ -37,6 +49,7 @@ class RewardService(
             "player" to playerName,
             "service" to serviceName,
             "gold" to gold.toString(),
+            "multiplier" to multiplier.toString(),
             "streak_text" to streakText,
         )
     }

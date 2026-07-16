@@ -30,7 +30,7 @@ class EnthusiaVotesPlugin : JavaPlugin() {
         services = ServiceModule(this)
 
         // Register proxy plugin messaging channels
-        val proxiedDelivery = ProxiedDeliveryService(this, BukkitGoldDelivery())
+        val proxiedDelivery = ProxiedDeliveryService(this)
         proxiedDelivery.register()
         proxiedDeliveryService = proxiedDelivery
 
@@ -55,6 +55,7 @@ class EnthusiaVotesPlugin : JavaPlugin() {
         )
 
         server.pluginManager.registerEvents(services.voteListener, this)
+        server.pluginManager.registerEvents(services.miningListener, this)
         server.pluginManager.registerEvents(services.offlineVoteLoginListener, this)
 
         // Register PlaceholderAPI expansion if PAPI is present

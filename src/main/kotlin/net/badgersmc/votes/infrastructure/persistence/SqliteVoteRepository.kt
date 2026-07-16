@@ -18,7 +18,7 @@ class SqliteVoteRepository(
 
     override fun saveVote(record: VoteRecord) {
         transaction(db) {
-            SchemaUtils.createMissingTablesAndColumns(VoteTable, PlayerStatsTable)
+            SchemaUtils.createMissingTablesAndColumns(VoteTable, PlayerStatsTable, OfflineVoteTable)
 
             VoteTable.insert {
                 it[playerUuid] = record.playerUuid.toString()

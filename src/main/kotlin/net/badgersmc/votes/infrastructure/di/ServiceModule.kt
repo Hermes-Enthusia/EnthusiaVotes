@@ -6,6 +6,7 @@ import net.badgersmc.nexus.scheduler.NexusScheduler
 import net.badgersmc.votes.application.*
 import net.badgersmc.votes.infrastructure.bukkit.BukkitGoldDelivery
 import net.badgersmc.votes.infrastructure.bukkit.EnthusiaVotesPlugin
+import net.badgersmc.votes.infrastructure.bukkit.MiningListener
 import net.badgersmc.votes.infrastructure.bukkit.OfflineVoteLoginListener
 import net.badgersmc.votes.infrastructure.bukkit.ProxiedDeliveryService
 import net.badgersmc.votes.infrastructure.bukkit.VoteReminder
@@ -89,7 +90,7 @@ class ServiceModule(
     }
 
     val rewardService: RewardService by lazy {
-        RewardService(voteConfig, votePartyService, lang)
+        RewardService(voteRepository, votePartyService, lang)
     }
 
     val voteBroadcaster: VoteBroadcaster by lazy {
@@ -97,7 +98,7 @@ class ServiceModule(
     }
 
     val goldDelivery: GoldDelivery by lazy {
-        plugin.proxiedDeliveryService ?: BukkitGoldDelivery()
+        BukkitGoldDelivery()
     }
 
     val voteService: VoteService by lazy {
@@ -108,7 +109,7 @@ class ServiceModule(
         BedrockVoteForm(voteRepository, voteConfig, plugin.logger, lang)
     }
 
-    val voteCommand: VoteCommand by lazy { VoteCommand(voteRepository, voteConfig, lang) }
+    val voteCommand: VoteCommand by lazy { VoteCommand(voteRepository, voteConfig, lang, rewardService) }
     val voteSitesCommand: VoteSitesCommand by lazy { VoteSitesCommand(voteConfig, lang) }
     val voteTopCommand: VoteTopCommand by lazy { VoteTopCommand(voteRepository, lang) }
     val evAdminCommand: EVAdminCommand by lazy { EVAdminCommand(votePartyService, voteRepository, lang) }
@@ -117,8 +118,12 @@ class ServiceModule(
         VotifierVoteListener(voteService)
     }
 
+    val miningListener: MiningListener by lazy {
+        MiningListener(rewardService, lang)
+    }
+
     val offlineVoteLoginListener: OfflineVoteLoginListener by lazy {
-        OfflineVoteLoginListener(voteRepository, goldDelivery, lang)
+        OfflineVoteLoginListener(voteRepository, goldDelivery, lang, rewardService)
     }
 
     val placeholderExpansion: EnthusiaVotesExpansion by lazy {

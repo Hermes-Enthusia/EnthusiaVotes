@@ -66,7 +66,7 @@ object VoteTable : Table("votes") {
     val playerName = text("player_name")
     val serviceName = text("service_name")
     val timestamp = long("timestamp")
-    val goldAwarded = integer("gold_awarded")
+    val goldAwarded = integer("gold_awarded").default(0)
 
     override val primaryKey = PrimaryKey(id)
 }

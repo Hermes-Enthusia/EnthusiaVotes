@@ -16,6 +16,10 @@ dependencies:
       load: BEFORE
       required: false
       join-classpath: true
+    floodgate:
+      load: BEFORE
+      required: false
+      join-classpath: true
 permissions:
   enthusiavotes.vote:
     description: Allow receiving vote rewards.
