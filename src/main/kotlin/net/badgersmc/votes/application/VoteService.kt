@@ -19,19 +19,20 @@ class VoteService(
     private val config: VoteConfig,
     private val lang: LangService,
 ) {
-    private val voteSound: Sound by lazy {
-        try {
-            Sound.valueOf(config.voteSound.uppercase())
-        } catch (_: IllegalArgumentException) {
-            Sound.ENTITY_EXPERIENCE_ORB_PICKUP
-        }
+    private val voteSound: Sound by lazy { parseSound(config.voteSound) }
+    private val allSitesSound: Sound by lazy { parseSound(config.allSitesSound) }
+
+    private fun parseSound(name: String): Sound = try {
+        Sound.valueOf(name.uppercase())
+    } catch (_: IllegalArgumentException) {
+        Sound.ENTITY_EXPERIENCE_ORB_PICKUP
     }
 
     fun processVote(playerName: String, playerUuid: UUID, serviceName: String): VoteResult {
         val stats = repo.getStats(playerUuid)
         val streak = stats.currentStreak + 1
 
-        val gold = (config.minGold..config.maxGold).random()
+        var gold = (config.minGold..config.maxGold).random()
         val record = VoteRecord(
             playerUuid = playerUuid,
             playerName = playerName,
@@ -41,13 +42,24 @@ class VoteService(
         repo.saveVote(record)
 
         val player = Bukkit.getPlayer(playerUuid)
+        val allSitesComplete: Boolean
         if (player != null) {
+            // Audio cue for individual vote (tabbed-out voters)
+            try { player.playSound(player.location, voteSound, 1.0f, 1.0f) } catch (_: Exception) {}
+
+            // Check if they voted on all configured sites today
+            val todaysServices = repo.getTodaysServices(playerUuid)
+            allSitesComplete = todaysServices.size >= config.voteSites.size
+            if (allSitesComplete) {
+                gold += config.allSitesBonusGold
+                try { player.playSound(player.location, allSitesSound, 1.0f, 1.0f) } catch (_: Exception) {}
+                val bonusMsg = lang.msg("voteparty.all_sites_bonus", "bonus" to config.allSitesBonusGold.toString())
+                player.sendMessage(bonusMsg)
+            }
+
             goldDelivery.deliver(playerUuid, gold)
-            // Audio cue for tabbed-out voters
-            try {
-                player.playSound(player.location, voteSound, 1.0f, 1.0f)
-            } catch (_: Exception) {}
         } else {
+            allSitesComplete = false
             repo.queueOfflineGold(playerUuid, gold)
         }
 
@@ -62,7 +74,8 @@ class VoteService(
         }
 
         rewardService.cacheMultiplier(playerUuid, streak)
-        val multiplier = rewardService.streakMultiplier(streak) * votePartyService.getCurrentMultiplier()
+        val baseMultiplier = rewardService.streakMultiplier(streak) * votePartyService.getCurrentMultiplier()
+        val multiplier = if (allSitesComplete) baseMultiplier + config.allSitesBonusMultiplier else baseMultiplier
 
         val message = rewardService.buildVoteMessage(playerName, gold, multiplier, streak, serviceName)
         broadcaster.broadcastVote(message)

@@ -115,7 +115,10 @@ class ServiceModule(
                 votePartyThreshold = (vp?.get("threshold") as? Number)?.toInt() ?: 100,
                 votePartyDurationMinutes = (vp?.get("duration-minutes") as? Number)?.toInt() ?: 5,
                 reminderIntervalMinutes = ((data["reminder-interval-minutes"] ?: data["reminderIntervalMinutes"]) as? Number)?.toInt() ?: 5,
-                voteSound = data["vote-sound"]?.toString() ?: "ENTITY_EXPERIENCE_ORB_PICKUP",
+                voteSound = data["vote-sound"]?.toString() ?: "BLOCK_AMETHYST_BLOCK_CHIME",
+                allSitesSound = data["all-sites-sound"]?.toString() ?: "ENTITY_PLAYER_LEVELUP",
+                allSitesBonusGold = ((data["all-sites-bonus-gold"] ?: data["allSitesBonusGold"]) as? Number)?.toInt() ?: 20,
+                allSitesBonusMultiplier = ((data["all-sites-bonus-multiplier"] ?: data["allSitesBonusMultiplier"]) as? Number)?.toDouble() ?: 0.5,
                 storageConfig = storage,
                 voteSites = sites,
             )
