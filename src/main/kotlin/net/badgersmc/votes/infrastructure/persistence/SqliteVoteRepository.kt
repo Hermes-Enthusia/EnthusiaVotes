@@ -97,8 +97,18 @@ class SqliteVoteRepository(
     private fun computeNewStreak(uuid: UUID, now: Instant): Int {
         val existing = getStats(uuid)
         val last = existing.lastVoteAt ?: return 1
-        val hoursSince = java.time.Duration.between(last, now).toHours()
-        return if (hoursSince in 1..36) existing.currentStreak + 1 else 1
+
+        val lastDate = java.time.LocalDate.ofInstant(last, java.time.ZoneId.systemDefault())
+        val nowDate = java.time.LocalDate.ofInstant(now, java.time.ZoneId.systemDefault())
+
+        return when {
+            // Already voted today — same streak, don't increment
+            lastDate == nowDate -> existing.currentStreak
+            // Voted yesterday — streak continues
+            lastDate.plusDays(1) == nowDate -> existing.currentStreak + 1
+            // Missed a day — streak resets
+            else -> 1
+        }
     }
 
     override fun queueOfflineGold(uuid: UUID, gold: Int) {
