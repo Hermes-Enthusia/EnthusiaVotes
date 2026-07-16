@@ -5,11 +5,10 @@ import net.badgersmc.votes.application.VoteRepository
 import net.badgersmc.votes.infrastructure.config.VoteConfig
 import org.bukkit.entity.Player
 import org.geysermc.cumulus.form.SimpleForm
-import java.util.UUID
+import org.geysermc.floodgate.api.FloodgateApi
 import java.util.logging.Logger
 
-/** Sends a SimpleForm to Bedrock players for /vote. Uses reflection for FloodgateApi to avoid
- * NoClassDefFoundError when Floodgate is not present or is in a different classloader. */
+/** Sends a SimpleForm to Bedrock players for /vote. */
 class BedrockVoteForm(
     private val voteRepository: VoteRepository,
     private val voteConfig: VoteConfig,
@@ -19,11 +18,7 @@ class BedrockVoteForm(
     companion object {
         fun isBedrockPlayer(player: Player): Boolean {
             return try {
-                val apiClass = Class.forName("org.geysermc.floodgate.api.FloodgateApi")
-                val getInstance = apiClass.getMethod("getInstance")
-                val api = getInstance.invoke(null)
-                val isFloodgatePlayer = apiClass.getMethod("isFloodgatePlayer", UUID::class.java)
-                isFloodgatePlayer.invoke(api, player.uniqueId) as Boolean
+                FloodgateApi.getInstance().isFloodgatePlayer(player.uniqueId)
             } catch (_: Exception) {
                 false
             }
@@ -57,11 +52,7 @@ class BedrockVoteForm(
         }
 
         try {
-            val apiClass = Class.forName("org.geysermc.floodgate.api.FloodgateApi")
-            val getInstance = apiClass.getMethod("getInstance")
-            val api = getInstance.invoke(null)
-            val sendForm = apiClass.getMethod("sendForm", UUID::class.java, SimpleForm::class.java)
-            sendForm.invoke(api, player.uniqueId, form)
+            FloodgateApi.getInstance().sendForm(player.uniqueId, form)
         } catch (e: Exception) {
             logger.warning("Failed to open Bedrock vote form for ${player.name}: ${e.message}")
         }
