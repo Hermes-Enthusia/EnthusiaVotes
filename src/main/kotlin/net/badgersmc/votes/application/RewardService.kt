@@ -2,6 +2,7 @@ package net.badgersmc.votes.application
 
 import net.badgersmc.nexus.i18n.LangService
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -41,16 +42,17 @@ class RewardService(
         streak: Int,
         serviceName: String,
     ): Component {
-        // Use empty string for streak_text when no streak — Component.empty() breaks MiniMessage
-        val streakText: Any = if (streak > 1)
-            lang.msg("voteparty.streak_suffix", "streak" to streak.toString())
+        // Serialize streak suffix to MiniMessage string before inserting into template —
+        // passing a Component directly breaks the parser (shows raw TextComponentImpl dump)
+        val streakStr: String = if (streak > 1)
+            MiniMessage.miniMessage().serialize(lang.msg("voteparty.streak_suffix", "streak" to streak.toString()))
         else ""
         return lang.msg(
             "voteparty.reward_message",
             "player" to playerName,
             "service" to serviceName,
             "multiplier" to multiplier.toString(),
-            "streak_text" to streakText,
+            "streak_text" to streakStr,
         )
     }
 }
