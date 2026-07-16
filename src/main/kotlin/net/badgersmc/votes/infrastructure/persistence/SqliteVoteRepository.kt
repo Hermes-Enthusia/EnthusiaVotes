@@ -18,7 +18,7 @@ class SqliteVoteRepository(
 
     override fun saveVote(record: VoteRecord) {
         transaction(db) {
-            SchemaUtils.createMissingTablesAndColumns(VoteTable, PlayerStatsTable, OfflineVoteTable)
+            SchemaUtils.create(VoteTable, PlayerStatsTable, OfflineVoteTable)
 
             VoteTable.insert {
                 it[playerUuid] = record.playerUuid.toString()
@@ -139,7 +139,7 @@ class SqliteVoteRepository(
     }
 
     override fun loadPartyState(): VotePartyState? = transaction(db) {
-        SchemaUtils.createMissingTablesAndColumns(VoteTable, PlayerStatsTable, VotePartyTable)
+        SchemaUtils.create(VoteTable, PlayerStatsTable, VotePartyTable)
         VotePartyTable.selectAll().singleOrNull()?.let { row ->
             VotePartyState(
                 active = row[VotePartyTable.active],
