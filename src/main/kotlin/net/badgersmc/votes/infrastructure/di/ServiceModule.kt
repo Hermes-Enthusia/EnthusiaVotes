@@ -15,6 +15,7 @@ import net.badgersmc.votes.infrastructure.config.VoteConfig
 import net.badgersmc.votes.infrastructure.config.MariaDbConfig
 import net.badgersmc.votes.infrastructure.config.StorageConfig
 import net.badgersmc.votes.infrastructure.config.VoteSite
+import net.badgersmc.votes.infrastructure.config.VoteSitePresets
 import net.badgersmc.votes.infrastructure.form.BedrockVoteForm
 import net.badgersmc.votes.infrastructure.i18n.EnthusiaVotesLang
 import net.badgersmc.votes.infrastructure.messaging.BukkitVoteBroadcaster
@@ -103,12 +104,11 @@ class ServiceModule(
             val vp = data["vote-party"] as? Map<*, *>
             val sites = (data["vote-sites"] as? List<*>)?.mapNotNull { s ->
                 val site = s as? Map<*, *> ?: return@mapNotNull null
-                VoteSite(
-                    name = site["name"]?.toString() ?: "Unknown",
-                    url = site["url"]?.toString() ?: "",
-                    serviceName = site["service-name"]?.toString()?.takeIf { it.isNotBlank() }
-                        ?: VoteSitePresets.resolve(site["url"]?.toString() ?: ""),
-                )
+                val name = site["name"]?.toString() ?: "Unknown"
+                val url = site["url"]?.toString() ?: ""
+                val svcName = (site["service-name"] as? String)?.takeIf { it.isNotBlank() }
+                    ?: VoteSitePresets.resolve(url)
+                VoteSite(name = name, url = url, serviceName = svcName)
             } ?: emptyList()
 
             return VoteConfig(
