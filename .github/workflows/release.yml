@@ -21,9 +21,12 @@ jobs:
       - name: Build
         run: ./gradlew shadowJar --no-daemon
 
+      - name: Rename jar
+        run: mv build/libs/EnthusiaVotes-0.1.0.jar "build/libs/EnthusiaVotes-v0.1.${{ github.run_number }}.jar"
+
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.1.${{ github.run_number }}
-          files: build/libs/EnthusiaVotes-*.jar
+          files: build/libs/EnthusiaVotes-v0.1.${{ github.run_number }}.jar
           generate_release_notes: true
           make_latest: true
