@@ -76,6 +76,27 @@ class SqliteVoteRepository(
         VoteTable.selectAll().count().toInt()
     }
 
+    override fun activateMultiplier(uuid: UUID): PlayerStats = transaction(db) {
+        val now = System.currentTimeMillis()
+        val existing = PlayerStatsTable.selectAll()
+            .where { PlayerStatsTable.playerUuid eq uuid.toString() }
+            .singleOrNull()
+        if (existing != null) {
+            PlayerStatsTable.update({ PlayerStatsTable.playerUuid eq uuid.toString() }) {
+                it[multiplierActivatedAt] = now
+            }
+        } else {
+            PlayerStatsTable.insert {
+                it[playerUuid] = uuid.toString()
+                it[totalVotes] = 0
+                it[currentStreak] = 0
+                it[bestStreak] = 0
+                it[multiplierActivatedAt] = now
+            }
+        }
+        getStats(uuid)
+    }
+
     override fun getTodaysServices(uuid: UUID): Set<String> = transaction(db) {
         val todayStart = java.time.LocalDate.now().atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond()
         VoteTable.selectAll()
@@ -92,6 +113,7 @@ class SqliteVoteRepository(
         lastVoteAt = row[PlayerStatsTable.lastVoteAt]?.let {
             Instant.ofEpochSecond(it)
         },
+        multiplierActivatedAt = row[PlayerStatsTable.multiplierActivatedAt],
     )
 
     private fun computeNewStreak(uuid: UUID, now: Instant): Int {
