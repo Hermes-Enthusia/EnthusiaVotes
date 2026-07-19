@@ -184,7 +184,7 @@ class ServiceModule(
     }
 
     val offlineVoteLoginListener: OfflineVoteLoginListener by lazy {
-        OfflineVoteLoginListener(voteRepository, goldDelivery, lang, rewardService)
+        OfflineVoteLoginListener(voteRepository, goldDelivery, lang)
     }
 
     val placeholderExpansion: EnthusiaVotesExpansion by lazy {

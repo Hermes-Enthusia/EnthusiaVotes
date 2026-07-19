@@ -18,6 +18,8 @@ data class PlayerStats(
     val currentStreak: Int = 0,
     val bestStreak: Int = 0,
     val lastVoteAt: Instant? = null,
+    /** Epoch millis when the mining multiplier was last activated. 0 = never/expired. */
+    val multiplierActivatedAt: Long = 0L,
 )
 
 data class VoteParty(

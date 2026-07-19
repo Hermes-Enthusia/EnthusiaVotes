@@ -21,6 +21,10 @@ class MiningListener(
         val block = event.block
         if (!GOLD_ORES.contains(block.type)) return
 
+        // Silk Touch drops the ore block — extra raw gold on top would be a dupe
+        val tool = event.player.inventory.itemInMainHand
+        if (tool.containsEnchantment(org.bukkit.enchantments.Enchantment.SILK_TOUCH)) return
+
         val multiplier = rewardService.getMiningMultiplier(event.player.uniqueId)
         if (multiplier <= 1.0) return
 

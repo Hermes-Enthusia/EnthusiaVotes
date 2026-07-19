@@ -7,6 +7,7 @@ import java.util.UUID
 
 interface VoteRepository {
     fun saveVote(record: VoteRecord)
+    fun activateMultiplier(uuid: UUID): PlayerStats
     fun getStats(uuid: UUID): PlayerStats
     fun getTotalVotes(uuid: UUID): Int
     fun getTopVoters(limit: Int): List<PlayerStats>

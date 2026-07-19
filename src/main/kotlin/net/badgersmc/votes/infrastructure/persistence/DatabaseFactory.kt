@@ -77,6 +77,7 @@ object PlayerStatsTable : Table("player_stats") {
     val currentStreak = integer("current_streak").default(0)
     val bestStreak = integer("best_streak").default(0)
     val lastVoteAt = long("last_vote_at").nullable()
+    val multiplierActivatedAt = long("multiplier_activated_at").default(0)
 
     override val primaryKey = PrimaryKey(playerUuid)
 }

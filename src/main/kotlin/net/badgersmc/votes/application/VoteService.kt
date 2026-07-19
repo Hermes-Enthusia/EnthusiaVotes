@@ -30,7 +30,8 @@ class VoteService(
 
     fun processVote(playerName: String, playerUuid: UUID, serviceName: String): VoteResult {
         val stats = repo.getStats(playerUuid)
-        val streak = stats.currentStreak + 1
+        val oldStreak = stats.currentStreak
+        val streak = oldStreak + 1
 
         var gold = (config.minGold..config.maxGold).random()
         val record = VoteRecord(
@@ -74,8 +75,13 @@ class VoteService(
             broadcaster.broadcastVoteParty(partyMsg)
         }
 
-        rewardService.cacheMultiplier(playerUuid, streak)
-        val baseMultiplier = rewardService.streakMultiplier(streak) * votePartyService.getCurrentMultiplier()
+        // Activate temporary mining multiplier if streak crossed a threshold
+        val newStats = repo.getStats(playerUuid)
+        val multiplierActivated = rewardService.tryActivateMultiplier(
+            playerUuid, newStreak = newStats.currentStreak, oldStreak = oldStreak
+        )
+
+        val baseMultiplier = rewardService.getMiningMultiplier(playerUuid)
         val multiplier = if (allSitesComplete) baseMultiplier + config.allSitesBonusMultiplier else baseMultiplier
 
         val message = rewardService.buildVoteMessage(playerName, gold, multiplier, streak, serviceName)
