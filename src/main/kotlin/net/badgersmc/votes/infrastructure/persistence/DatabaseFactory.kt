@@ -105,8 +105,12 @@ object Migrations {
             // must be done manually (or delete votes.db for a clean slate).
             SchemaUtils.create(VoteTable, PlayerStatsTable, OfflineVoteTable, VotePartyTable)
 
-            // Manual column additions for upgrades (SQLite doesn't support MODIFY COLUMN)
-            runCatching {
+            // Manual column additions for upgrades (SQLite doesn't support MODIFY COLUMN).
+            // Only add if the column doesn't already exist — don't silently swallow errors.
+            val existingColumns = exec("PRAGMA table_info(player_stats)") { rs ->
+                buildSet { while (rs.next()) add(rs.getString("name").lowercase()) }
+            } ?: emptySet()
+            if ("multiplier_activated_at" !in existingColumns) {
                 exec("ALTER TABLE player_stats ADD COLUMN multiplier_activated_at INTEGER NOT NULL DEFAULT 0")
             }
         }
